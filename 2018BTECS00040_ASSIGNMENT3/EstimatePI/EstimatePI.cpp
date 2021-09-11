@@ -2,7 +2,9 @@
 #include <stdio.h> 
 #include <math.h> 
 #include <string.h> 
-#define SEED 65122 
+#include<omp.h>
+
+#define SEED 6565 
  
 int main() 
 { 
@@ -13,19 +15,17 @@ int main()
    scanf("%d",&niter); 
  
    srand(SEED); 
-    
    double x,y,z;
    
-   #pragma omp parallel for  shared(niter) schedule(static,100) reduction(+: count)
+   #pragma omp parallel for num_threads(8)  shared(niter) reduction(+: count)
    for (int i=0; i<niter; i++) { 
-   
       x = (double)rand()/RAND_MAX; 
       y = (double)rand()/RAND_MAX; 
       
       z = x*x+y*y; 
       
       if (z<=1) 
-	  	count++; 
+      count++; 
     } 
    double pi=(double)count/niter*4; 
    printf("# of trials= %d , estimate of pi is %g \n",niter,pi); 
